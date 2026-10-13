@@ -2,7 +2,7 @@
 <title>STUDENTカードメーカー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=M+PLUS+Rounded+1c:wght@800&family=Noto+Sans+JP:wght@500;700&family=Zen+Maru+Gothic:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&family=Noto+Sans+JP:wght@500;700&display=swap">
 <style>
 /* Layout: card preview pinned beside (desktop) or above (phone) one input column; 青空教室 palette from the camp slides (sky, white cards, green ink, amber accents) */
 :root {
@@ -131,7 +131,7 @@ input:focus-visible, textarea:focus-visible, button:focus-visible, .chip:focus-w
 .photo { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; }
 .thumb {
   width: 72px; height: 72px; border-radius: 50%;
-  background: #eaf6ec center / cover no-repeat;
+  background: #ffffff center / cover no-repeat;
   border: 4px solid #fff;
   box-shadow: 0 0 0 1px var(--line-strong), 0 3px 8px rgba(46, 110, 140, .2);
 }
@@ -260,30 +260,6 @@ button:hover, .filebtn:hover { border-color: var(--green); }
           <svg viewBox="0 0 30 26" aria-hidden="true"><rect x="9" y="1.5" width="12" height="23" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.4" transform="rotate(14 15 13)"/></svg>MOBILE</button>
         <button type="button" data-plat="both" aria-pressed="false">
           <svg viewBox="0 0 30 26" aria-hidden="true"><rect x="1" y="2" width="14" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5 15.5h6" stroke="currentColor" stroke-width="2.2"/><rect x="18" y="9" width="9" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>BOTH</button>
-      </div>
-    </div>
-
-    <div class="group">
-      <h2>STYLE</h2>
-      <div class="field">
-        <span class="label">文字の書体</span>
-        <div class="chips">
-          <label class="chip"><input type="radio" name="font" value="noto" checked><span style="font-family:'Noto Sans JP',sans-serif;font-weight:700">ゴシック</span></label>
-          <label class="chip"><input type="radio" name="font" value="maru"><span style="font-family:'M PLUS Rounded 1c',sans-serif;font-weight:800">丸ゴシック</span></label>
-          <label class="chip"><input type="radio" name="font" value="zen"><span style="font-family:'Zen Maru Gothic',sans-serif;font-weight:700">やわらか</span></label>
-          <label class="chip"><input type="radio" name="font" value="dela"><span style="font-family:'Dela Gothic One',sans-serif">極太</span></label>
-        </div>
-      </div>
-      <div class="field">
-        <span class="label">文字の色</span>
-        <div class="chips" id="colors"></div>
-      </div>
-      <div class="field">
-        <span class="label">文字の位置</span>
-        <div class="chips">
-          <label class="chip"><input type="radio" name="align" value="left" checked><span>左寄せ</span></label>
-          <label class="chip"><input type="radio" name="align" value="center"><span>中央</span></label>
-        </div>
       </div>
     </div>
 
@@ -510,26 +486,6 @@ button:hover, .filebtn:hover { border-color: var(--green); }
   }
   segBtns.forEach((b) => b.addEventListener("click", () => setPlatform(b.dataset.plat)));
 
-  function renderSwatches() {
-    const box = $("colors");
-    box.textContent = "";
-    for (const [v, n] of THEME.colors) {
-      const lab = document.createElement("label"); lab.className = "chip swatch";
-      const inp = document.createElement("input"); inp.type = "radio"; inp.name = "color"; inp.value = v; inp.checked = v === state.color;
-      inp.addEventListener("change", () => { state.color = v; refresh(); });
-      const sp = document.createElement("span");
-      const dot = document.createElement("i"); dot.style.background = v;
-      sp.append(dot, document.createTextNode(n));
-      lab.append(inp, sp); box.append(lab);
-    }
-  }
-  function fixColor() {
-    if (!THEME.colors.some(([v]) => v === state.color)) state.color = THEME.colors[0][0];
-  }
-  document.querySelectorAll('input[name="font"],input[name="align"]').forEach((r) =>
-    r.addEventListener("change", () => { state[r.name] = r.value; refresh(); })
-  );
-
   // ---------- photo ----------
   const fileInput = $("f-photo");
   const zoom = $("f-zoom");
@@ -561,7 +517,10 @@ button:hover, .filebtn:hover { border-color: var(--green); }
         const m = 900, k = Math.min(1, m / Math.max(img.naturalWidth, img.naturalHeight));
         const cv = document.createElement("canvas");
         cv.width = Math.round(img.naturalWidth * k); cv.height = Math.round(img.naturalHeight * k);
-        cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+        const cx = cv.getContext("2d");
+        cx.fillStyle = "#FFFFFF";
+        cx.fillRect(0, 0, cv.width, cv.height);
+        cx.drawImage(img, 0, 0, cv.width, cv.height);
         setAvatar(cv.toDataURL("image/jpeg", 0.9), false);
       };
       img.src = reader.result;
@@ -678,18 +637,12 @@ button:hover, .filebtn:hover { border-color: var(--green); }
   function applyStateToUI() {
     inputs.forEach((el) => (el.value = state.values[el.dataset.key] || ""));
     segBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.plat === state.platform)));
-    ["font", "align"].forEach((n) => {
-      const r = document.querySelector(`input[name="${n}"][value="${state[n]}"]`);
-      if (r) r.checked = true;
-    });
-    renderSwatches();
   }
 
   // ---------- boot ----------
   loadDraft();
   delete state.theme;
-  if (!FONTS[state.font]) state.font = "noto";
-  fixColor();
+  Object.assign(state, { font: "noto", color: THEME.colors[0][0], align: "left" });
   applyStateToUI();
   tpl.onload = schedule;
   tpl.src = TPL_SRC;
