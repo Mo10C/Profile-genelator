@@ -1,5 +1,32 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>プロフィールカードメーカー</title>
+<meta name="description" content="名前やRiot ID、目標を入力するだけで、TFT合宿のプロフィールカードが作れます。">
+<link rel="icon" type="image/png" href="4x.png">
+<link rel="apple-touch-icon" href="4x.png">
+<meta name="theme-color" content="#F8931F">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TFT Training Camp">
+<meta property="og:title" content="プロフィールカードメーカー">
+<meta property="og:description" content="名前やRiot ID、目標を入力するだけで、TFT合宿のプロフィールカードが作れます。">
+<meta property="og:url" content="https://mo10c.github.io/Profile-genelator/">
+<meta property="og:image" content="https://mo10c.github.io/Profile-genelator/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="プロフィールカードメーカー">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="プロフィールカードメーカー">
+<meta name="twitter:description" content="名前やRiot ID、目標を入力するだけで、TFT合宿のプロフィールカードが作れます。">
+<meta name="twitter:image" content="https://mo10c.github.io/Profile-genelator/ogp.png">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&family=Noto+Sans+JP:wght@500;700&display=swap">
@@ -37,7 +64,24 @@ body {
   padding-inline: 16px;
   padding-block: 20px 48px;
 }
-.top { margin: 0; display: grid; gap: 4px; min-width: 0; }
+.top { margin: 0; display: flex; align-items: center; gap: 14px; min-width: 0; }
+.top .logo { flex: none; height: 76px; width: auto; filter: drop-shadow(0 4px 8px rgba(46, 110, 140, .18)); }
+.top-text { display: grid; gap: 4px; min-width: 0; }
+@media (min-width: 860px) { .top .logo { height: 104px; } }
+
+/* characters peeking over the top edge of each input panel */
+.group { position: relative; }
+.group.peek { margin-top: 44px; }
+.peek-img {
+  position: absolute; right: 14px; top: -64px;
+  height: 104px; width: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 6px rgba(46, 110, 140, .18));
+}
+.rest { display: grid; justify-items: center; gap: 2px; padding-top: 6px; }
+.rest img { height: 120px; width: auto; }
+.rest p { margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
+a.filebtn { text-decoration: none; }
 .eyebrow { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: .32em; color: var(--green); }
 h1 {
   margin: 0;
@@ -222,12 +266,15 @@ button:hover, .filebtn:hover { border-color: var(--green); }
   @keyframes rise { from { opacity: 0; transform: translate(-50%, 8px); } }
 }
 </style>
-
+</head>
+<body>
 <main class="layout">
   <header class="top">
-    <p class="eyebrow">TFT TRAINING CAMP</p>
-    <h1>プロフィールカードメーカー</h1>
-    <p class="lead">入力した内容がそのままカードに入ります。長い文章は自動で文字が小さくなります。</p>
+    <img class="logo" src="logo.webp" width="309" height="300" alt="TFT Training Camp! 合宿">
+    <div class="top-text">
+      <h1>プロフィールカードメーカー</h1>
+      <p class="lead">入力した内容がそのままカードに入ります。長い文章は自動で文字が小さくなります。</p>
+    </div>
   </header>
 
   <section class="stage" aria-label="カードのプレビュー">
@@ -236,7 +283,8 @@ button:hover, .filebtn:hover { border-color: var(--green); }
   </section>
 
   <form class="panel" id="form" autocomplete="off">
-    <div class="group">
+    <div class="group peek">
+      <img class="peek-img" src="chara-penguin.webp" width="229" height="240" alt="">
       <h2>PHOTO</h2>
       <div class="photo">
         <div class="thumb" id="thumb" aria-hidden="true"></div>
@@ -251,7 +299,8 @@ button:hover, .filebtn:hover { border-color: var(--green); }
       </div>
     </div>
 
-    <div class="group">
+    <div class="group peek">
+      <img class="peek-img" src="chara-dragon.webp" width="241" height="240" alt="">
       <h2>PROFILE</h2>
       <div class="field"><label for="f-name">NAME</label><input type="text" id="f-name" data-key="name" placeholder="例：やまだ たろう"><p class="warn" id="w-name" hidden></p></div>
       <div class="field"><label for="f-riot">Riot ID</label><input type="text" id="f-riot" data-key="riot" placeholder="例：Taro#JP1"><p class="warn" id="w-riot" hidden></p></div>
@@ -260,11 +309,12 @@ button:hover, .filebtn:hover { border-color: var(--green); }
         <div class="field"><label for="f-time">プレイ時間帯</label><input type="text" id="f-time" data-key="time" placeholder="例：平日の夜"><p class="warn" id="w-time" hidden></p></div>
       </div>
       <div class="field"><label for="f-comp">好きな構成-駒</label><input type="text" id="f-comp" data-key="comp" placeholder="例：リロール構成 / アーリ"><p class="warn" id="w-comp" hidden></p></div>
-      <div class="field"><label for="f-goal">自分の目標/意気込み</label><textarea id="f-goal" data-key="goal" rows="3" placeholder="例：合宿中にマスター到達が目標です！&#10;毎試合振り返りをして、先生のアドバイスを次の試合ですぐ実践します。"></textarea><p class="warn" id="w-goal" hidden></p></div>
-      <div class="field"><label for="f-intro">自己紹介/自分を一言で表すと</label><textarea id="f-intro" data-key="intro" rows="3" placeholder="例：一言で表すと「コツコツ型の負けず嫌い」です。&#10;わからないことは積極的に質問します。よろしくお願いします！"></textarea><p class="warn" id="w-intro" hidden></p></div>
+      <div class="field"><label for="f-goal">自分の目標/意気込み</label><textarea id="f-goal" data-key="goal" rows="4" placeholder="例：合宿中にマスター到達が目標です！&#10;毎試合振り返りをして、先生のアドバイスを次の試合ですぐ実践します。"></textarea><p class="warn" id="w-goal" hidden></p></div>
+      <div class="field"><label for="f-intro">自己紹介/自分を一言で表すと</label><textarea id="f-intro" data-key="intro" rows="4" placeholder="例：一言で表すと「コツコツ型の負けず嫌い」です。&#10;わからないことは積極的に質問します。よろしくお願いします！"></textarea><p class="warn" id="w-intro" hidden></p></div>
     </div>
 
-    <div class="group">
+    <div class="group peek">
+      <img class="peek-img" src="chara-poro.webp" width="267" height="240" alt="">
       <h2>PLATFORM</h2>
       <div class="seg" id="seg" role="group" aria-label="Platform">
         <button type="button" data-plat="" aria-pressed="true">
@@ -278,6 +328,11 @@ button:hover, .filebtn:hover { border-color: var(--green); }
       </div>
     </div>
 
+    <div class="rest">
+      <img src="chara-sleep.webp" width="344" height="320" alt="">
+      <p>入力できたら「画像を保存」でカードを保存しよう</p>
+    </div>
+
     <div class="actions">
       <button type="button" class="primary" id="save">画像を保存（PNG）</button>
       <button type="button" class="ghost" id="reset">リセット</button>
@@ -289,7 +344,10 @@ button:hover, .filebtn:hover { border-color: var(--green); }
   <div class="sheet-inner">
     <img id="sheet-img" alt="完成したプロフィールカード">
     <p>画像を長押し（PCは右クリック）して保存してください</p>
-    <button type="button" id="sheet-close">閉じる</button>
+    <div class="btns">
+      <a class="filebtn" id="sheet-dl" href="#" hidden>ファイルとして保存</a>
+      <button type="button" id="sheet-close">閉じる</button>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -603,9 +661,22 @@ button:hover, .filebtn:hover { border-color: var(--green); }
     toastEl.textContent = msg; toastEl.hidden = false;
     clearTimeout(toastT); toastT = setTimeout(() => (toastEl.hidden = true), 2600);
   }
+  const IN_ARTIFACT = !!(window.claude && window.claude.use);
+  const TOUCH = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
   const dlPromise = (async () => {
-    try { return window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch (e) { return null; }
+    try { return IN_ARTIFACT ? await window.claude.use("downloads") : null; } catch (e) { return null; }
   })();
+  let sheetUrl = null;
+  function showSheet(blob, filename) {
+    if (sheetUrl) URL.revokeObjectURL(sheetUrl);
+    sheetUrl = URL.createObjectURL(blob);
+    $("sheet-img").src = sheetUrl;
+    const link = $("sheet-dl");
+    link.hidden = IN_ARTIFACT;
+    link.href = sheetUrl;
+    link.download = filename;
+    $("sheet").hidden = false;
+  }
 
   $("save").addEventListener("click", async () => {
     await ensureFont();
@@ -614,10 +685,20 @@ button:hover, .filebtn:hover { border-color: var(--green); }
     renderTo(out, false);
     const name = (state.values.name || "").trim().replace(/[\\/:*?"<>|#\s]+/g, "_").slice(0, 40);
     const filename = `PROFILE_${name || "card"}.png`;
-    const dl = await Promise.race([dlPromise, new Promise((r) => setTimeout(() => r(null), 1500))]);
+    const blob = await new Promise((r) => out.toBlob(r, "image/png"));
+    if (!IN_ARTIFACT && !TOUCH) {
+      // normal web page on a PC: download straight away
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      toast("画像を保存しました");
+      return;
+    }
+    const dl = IN_ARTIFACT ? await Promise.race([dlPromise, new Promise((r) => setTimeout(() => r(null), 1500))]) : null;
     if (dl) {
       try {
-        const blob = await new Promise((r) => out.toBlob(r, "image/png"));
         await dl.save({ filename, data: blob });
         toast("画像を保存しました");
         return;
@@ -627,8 +708,7 @@ button:hover, .filebtn:hover { border-color: var(--green); }
         if (code === "rate_limited") { toast("少し待ってからもう一度押してください"); return; }
       }
     }
-    $("sheet-img").src = out.toDataURL("image/png");
-    $("sheet").hidden = false;
+    showSheet(blob, filename);
   });
   $("sheet-close").addEventListener("click", () => ($("sheet").hidden = true));
   $("sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") $("sheet").hidden = true; });
@@ -666,5 +746,5 @@ button:hover, .filebtn:hover { border-color: var(--green); }
   if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", schedule);
 })();
 </script>
-
-</body></html>
+</body>
+</html>
