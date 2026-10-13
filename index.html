@@ -37,7 +37,7 @@ body {
   padding-inline: 16px;
   padding-block: 20px 48px;
 }
-.top { max-width: 1080px; margin: 0 auto 18px; display: grid; gap: 4px; }
+.top { margin: 0; display: grid; gap: 4px; min-width: 0; }
 .eyebrow { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: .32em; color: var(--green); }
 h1 {
   margin: 0;
@@ -79,9 +79,24 @@ h1 {
   }
   .stage canvas { width: min(100%, calc(38vh * .7504)); width: min(100%, calc(38svh * .7504)); }
 }
+/* Desktop: the whole card sits top-left in the first screen (this is also what the link preview captures) */
 @media (min-width: 860px) {
-  .layout { grid-template-columns: minmax(0, 470px) minmax(0, 1fr); align-items: start; gap: 32px; }
-  .stage { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+  .layout {
+    grid-template-columns: min-content minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "stage head" "stage panel";
+    column-gap: 32px;
+    row-gap: 18px;
+    align-items: start;
+  }
+  .top { grid-area: head; padding-top: 6px; }
+  .stage { grid-area: stage; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+  .panel { grid-area: panel; }
+  .stage canvas {
+    max-width: none;
+    width: clamp(300px, calc((100vh - 84px) * .7504), 520px);
+    width: clamp(300px, calc((100svh - 84px) * .7504), 520px);
+  }
 }
 
 .panel { display: grid; gap: 14px; min-width: 0; }
@@ -208,15 +223,15 @@ button:hover, .filebtn:hover { border-color: var(--green); }
 }
 </style>
 
-<header class="top">
-  <p class="eyebrow">TFT TRAINING CAMP</p>
-  <h1>プロフィールカードメーカー</h1>
-  <p class="lead">入力した内容がそのままカードに入ります。長い文章は自動で文字が小さくなります。</p>
-</header>
-
 <main class="layout">
+  <header class="top">
+    <p class="eyebrow">TFT TRAINING CAMP</p>
+    <h1>プロフィールカードメーカー</h1>
+    <p class="lead">入力した内容がそのままカードに入ります。長い文章は自動で文字が小さくなります。</p>
+  </header>
+
   <section class="stage" aria-label="カードのプレビュー">
-    <canvas id="card" width="1792" height="2388" role="img" aria-label="STUDENTカードのプレビュー。欄をタップするとその入力欄に移動します"></canvas>
+    <canvas id="card" width="1792" height="2388" role="img" aria-label="プロフィールカードのプレビュー。欄をタップするとその入力欄に移動します"></canvas>
     <p class="hint">薄い文字は記入例です。カードの欄をタップするとその入力欄へ移動します</p>
   </section>
 
@@ -272,7 +287,7 @@ button:hover, .filebtn:hover { border-color: var(--green); }
 
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-inner">
-    <img id="sheet-img" alt="完成したSTUDENTカード">
+    <img id="sheet-img" alt="完成したプロフィールカード">
     <p>画像を長押し（PCは右クリック）して保存してください</p>
     <button type="button" id="sheet-close">閉じる</button>
   </div>
@@ -598,7 +613,7 @@ button:hover, .filebtn:hover { border-color: var(--green); }
     out.width = W * S; out.height = H * S;
     renderTo(out, false);
     const name = (state.values.name || "").trim().replace(/[\\/:*?"<>|#\s]+/g, "_").slice(0, 40);
-    const filename = `STUDENT_${name || "card"}.png`;
+    const filename = `PROFILE_${name || "card"}.png`;
     const dl = await Promise.race([dlPromise, new Promise((r) => setTimeout(() => r(null), 1500))]);
     if (dl) {
       try {
